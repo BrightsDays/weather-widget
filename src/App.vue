@@ -1,27 +1,40 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div class="app">
+    <city-choose />
+    <weather-data />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import WeatherData from "@/components/WeatherData.vue";
+import CityChoose from "@/components/CityChoose.vue";
 
 export default defineComponent({
   name: 'App',
   components: {
-    HelloWorld
+    CityChoose,
+    WeatherData
   }
 });
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.app {
+  width: 290px;
+  margin: 0 auto;
+  padding: 15px;
+  max-width: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Ubuntu,serif;
+  font-size: 16px;
+}
+
+.bold {
+  font-weight: 500;
 }
 </style>
