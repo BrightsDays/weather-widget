@@ -40,13 +40,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "WeatherData",
   data() {
     return {
-      city: '',
-      country: '',
       icon: '',
       temp: '',
       feelsLike: '',
@@ -59,12 +57,28 @@ export default {
       visibility: ''
     }
   },
+  props: {
+    lat: {
+      type: Number,
+      default: 55.7522
+    },
+    lon: {
+      type: Number,
+      default: 37.615
+    }
+  },
   mounted() {
-    this.show('moscow', '', 'en')
+    this.showWeather();
+  },
+  watch: {
+    lat: 'showWeather'
   },
   methods: {
-    show(selector, token, lang) {
-      fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=51.507&lon=0.128&APPID=${token}&units=metric&lang=${lang}`)
+    showWeather() {
+      this.show('e050de9385462b546f2d3a2143ebb69f', this.lat, this.lon, 'ru')
+    },
+    show(token, lat, lon, lang) {
+      fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&APPID=${token}&units=metric&lang=${lang}`)
           .then(res => res.json())
           .then(body => {
             this.icon = this.findValue(body, 'icon');
@@ -127,6 +141,10 @@ export default {
     align-items: center;
     text-align: left;
     margin: 0 0 8px;
+
+    &:last-child {
+      margin: 0;
+    }
   }
 
   &__sensor {

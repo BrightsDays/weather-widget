@@ -1,7 +1,7 @@
 <template>
   <div class="app">
-    <city-choose />
-    <weather-data />
+    <city-choose @changeLat="onChangeLat" @changeLon="onChangeLon" />
+    <weather-data :lat="lat" :lon="lon" />
   </div>
 </template>
 
@@ -15,6 +15,20 @@ export default defineComponent({
   components: {
     CityChoose,
     WeatherData
+  },
+  data() {
+    return {
+      lat: 0,
+      lon: 0
+    }
+  },
+  methods: {
+    onChangeLat(value: {type: number}) {
+      this.lat = value;
+    },
+    onChangeLon(value: {type: number}) {
+      this.lon = value;
+    }
   }
 });
 </script>
@@ -22,9 +36,11 @@ export default defineComponent({
 <style lang="scss">
 .app {
   width: 290px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 15px;
   max-width: 100%;
+  border: 1px solid grey;
+  border-radius: 8px;
 }
 
 * {
