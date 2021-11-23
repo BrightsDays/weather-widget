@@ -97,31 +97,38 @@ export default defineComponent({
           .then(res => res.json())
           .then(body => {
             this.icon = this.findValue(body, 'icon');
-            this.temp = Math.round(this.findValue(body, 'temp'));
-            this.feelsLike = Math.round(this.findValue(body, 'feels_like'));
+            this.temp = Math.round(+this.findValue(body, 'temp'));
+            this.feelsLike = Math.round(+this.findValue(body, 'feels_like'));
             this.clouds = this.findValue(body, 'main');
             this.windSpeed = this.findValue(body, 'wind_speed');
             this.windDeg = this.findValue(body, 'wind_deg');
             this.pressure = this.findValue(body, 'pressure');
             this.humidity = this.findValue(body, 'humidity');
-            this.dewPoint = Math.round(this.findValue(body, 'dew_point'));
+            this.dewPoint = Math.round(+this.findValue(body, 'dew_point'));
             this.visibility = +this.findValue(body, 'visibility') / 1000;
           })
       .catch(err => console.log(err))
     },
-    findValue(obj: apiRequest, item: string): any {
+    findValue(obj: apiRequest, item: string): string {
+      let result = ''
+
       for (const [key, value] of Object.entries(obj)) {
-        let temp;
+        let temp
+
         if (item === key) {
-          return value;
+          result = value
+          break
         }
         if (typeof value === 'object') {
-          temp = this.findValue(value, item);
+          temp = this.findValue(value, item)
         }
         if (temp !== undefined) {
-          return temp;
+          result = temp
+          break
         }
       }
+
+      return result
     }
   }
 })
