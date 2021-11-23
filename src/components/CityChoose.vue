@@ -1,55 +1,87 @@
 <template>
-  <div class="city-choose">
-    <div>{{ city }}, {{ country }}</div>
-    <div v-if="menuIsOpen"
-         class="city-choose__list">
-      <button @click="getCityCoords('london', 'e050de9385462b546f2d3a2143ebb69f', 'en')">London</button>
-      <button @click="getCityCoords('moscow', 'e050de9385462b546f2d3a2143ebb69f', 'ru')">Moscow</button>
-      <button @click="getCityCoords('berlin', 'e050de9385462b546f2d3a2143ebb69f', 'de')">Berlin</button>
+  <div
+      class="city-choose"
+      :class="{'city-choose--menu-shown': menuIsOpen}"
+  >
+    <div v-if="city && !menuIsOpen">
+      {{ city }}, {{ country }}
     </div>
-    <button class="city-choose__burger"
-            :class="{'city-choose__burger--close': menuIsOpen}"
-            @click="toggleMenu()">
-      <div/>
+    <div
+        v-if="menuIsOpen"
+        class="city-choose__list"
+    >
+      <button
+          class="city-choose__item"
+          v-for="item in citiesList"
+          :key="item"
+          @click="getCityCoords(item, 'e050de9385462b546f2d3a2143ebb69f', 'en')"
+          >{{ item }}</button>
+    </div>
+    <button
+        class="city-choose__burger"
+        :class="{'city-choose__burger--close': menuIsOpen}"
+        @click="toggleMenu()"
+    >
+      <span/>
     </button>
   </div>
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: 'CityChoose',
   data() {
     return {
       city: '',
       country: '',
+      citiesList: [
+        'Saint Petersburg',
+        'Belgrade',
+        'Moscow',
+        'Helsinki',
+        'Kazan'
+      ],
       menuIsOpen: false
     }
   },
-  emits: ['changeLat', 'lon'],
+  emits: {
+    changeLat(crd: number): number {
+      return crd
+    },
+    changeLon(crd: number): number {
+      return crd
+    }
+  },
   mounted() {
-    this.getCityCoords('moscow', 'e050de9385462b546f2d3a2143ebb69f', 'ru')
+    this.getCityCoords('moscow', 'e050de9385462b546f2d3a2143ebb69f', 'en')
   },
   methods: {
-    getCityCoords(selector, token, lang) {
-      fetch(`http://api.openweathermap.org/data/2.5/weather?q=${selector}&appid=${token}&lang=${lang}`)
-          .then(res => res.json())
-          .then(body => {
-            this.city = body.name;
-            this.country = body.sys.country;
-            this.$emit("changeLat", body.coord.lat);
-            this.$emit("changeLon", body.coord.lon);
-          })
+    getCityCoords(selector: string, token: string, lang: string): void {
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${selector}&appid=${token}&lang=${lang}`)
+        .then(res => res.json())
+        .then(body => {
+          this.city = body.name
+          this.country = body.sys?.country
+          this.$emit("changeLat", body.coord.lat)
+          this.$emit("changeLon", body.coord.lon)
+        })
+        .then((): void => this.toggleMenu())
     },
-    toggleMenu() {
-      this.menuIsOpen = !this.menuIsOpen;
+    toggleMenu (): void {
+      this.menuIsOpen = !this.menuIsOpen
     }
   }
-}
+})
 </script>
 
 <style lang="scss">
 .city-choose {
-  position: relative;
+  position: absolute;
+  top: 15px;
+  width: calc(100% - 30px);
+  z-index: 1;
 
   &__burger {
     position: absolute;
@@ -65,7 +97,7 @@ export default {
     background: none;
     z-index: 1;
 
-    div {
+    span {
       position: absolute;
       width: 100%;
       border-top: 1.6px solid #000000;
@@ -83,7 +115,7 @@ export default {
 
       &:after {
         position: absolute;
-        bottom: -5px;
+        bottom: -6px;
         left: 0;
         width: 16px;
         content: '';
@@ -93,12 +125,13 @@ export default {
     }
 
     &--close {
-      div {
+      span {
         border: none;
-        transform: translateY(-4px) translateX(-1.5px);
+        transform: translateY(-4px) translateX(-3.5px);
 
         &:before {
           width: 20px;
+          top: -5.5px;
           transform: translateY(10px) rotate(45deg);
         }
 
@@ -108,6 +141,25 @@ export default {
         }
       }
     }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #ffffff;
+  }
+
+  &__item {
+    padding: 10px 0;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  &--menu-shown {
+    height: calc(100% - 30px);
   }
 }
 </style>
