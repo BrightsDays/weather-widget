@@ -41,20 +41,35 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue"
+
+interface apiRequest {
+  icon?: string,
+  temp?: number,
+  feels_like?: number,
+  main?: string,
+  wind_speed?: string,
+  wind_deg?: string,
+  pressure?: string,
+  humidity?: string,
+  dew_point?: number,
+  visibility?: number
+}
+
+export default defineComponent({
   name: "WeatherData",
   data() {
     return {
       icon: '',
-      temp: '',
-      feelsLike: '',
+      temp: 0,
+      feelsLike: 0,
       clouds: '',
       windSpeed: '',
       windDeg: '',
       pressure: '',
       humidity: '',
-      dewPoint: '',
-      visibility: ''
+      dewPoint: 0,
+      visibility: 0
     }
   },
   props: {
@@ -77,8 +92,8 @@ export default {
     showWeather() {
       this.show('e050de9385462b546f2d3a2143ebb69f', this.lat, this.lon, 'ru')
     },
-    show(token, lat, lon, lang) {
-      fetch(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&APPID=${token}&units=metric&lang=${lang}`)
+    show(token: string, lat: number, lon: number, lang: string) {
+      fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&APPID=${token}&units=metric&lang=${lang}`)
           .then(res => res.json())
           .then(body => {
             this.icon = this.findValue(body, 'icon');
@@ -94,7 +109,7 @@ export default {
           })
       .catch(err => console.log(err))
     },
-    findValue(obj, item) {
+    findValue(obj: apiRequest, item: string): any {
       for (const [key, value] of Object.entries(obj)) {
         let temp;
         if (item === key) {
@@ -109,7 +124,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
