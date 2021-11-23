@@ -156,6 +156,10 @@ export default defineComponent({
     border: none;
     text-align: left;
     cursor: pointer;
+
+    &:first-child {
+      padding-top: 0;
+    }
   }
 
   &--menu-shown {
